@@ -18,6 +18,7 @@ const BookingForm = ({ onBookingSuccess, disabled }: BookingFormProps) => {
     toStation: '',
     journeyDate: '',
     passengerName: '',
+    dateOfBirth: '',
     age: '',
     phone: '',
   });
@@ -33,7 +34,7 @@ const BookingForm = ({ onBookingSuccess, disabled }: BookingFormProps) => {
 
   const validateForm = () => {
     if (!formData.fromStation || !formData.toStation || !formData.journeyDate ||
-        !formData.passengerName || !formData.age || !formData.phone) {
+        !formData.passengerName || !formData.dateOfBirth || !formData.age || !formData.phone) {
       setError('All fields are required');
       return false;
     }
@@ -85,6 +86,8 @@ const BookingForm = ({ onBookingSuccess, disabled }: BookingFormProps) => {
         toStation: formData.toStation,
         journeyDate: formData.journeyDate,
         passengerName: formData.passengerName,
+        dateOfBirth: formData.dateOfBirth,
+        bookingType: 'reservation', // Default for admin
         age: parseInt(formData.age),
         phone: formData.phone,
       });
@@ -95,6 +98,7 @@ const BookingForm = ({ onBookingSuccess, disabled }: BookingFormProps) => {
         toStation: '',
         journeyDate: '',
         passengerName: '',
+        dateOfBirth: '',
         age: '',
         phone: '',
       });
@@ -192,7 +196,7 @@ const BookingForm = ({ onBookingSuccess, disabled }: BookingFormProps) => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="md:col-span-2">
+          <div className="md:col-span-1">
             <label htmlFor="passengerName" className="block text-sm font-medium text-gray-700 mb-1">
               <div className="flex items-center gap-2">
                 <User className="w-4 h-4" />
@@ -211,7 +215,23 @@ const BookingForm = ({ onBookingSuccess, disabled }: BookingFormProps) => {
             />
           </div>
 
-          <div>
+          <div className="md:col-span-1">
+            <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-700 mb-1">
+              Date of Birth
+            </label>
+            <input
+              type="date"
+              id="dateOfBirth"
+              name="dateOfBirth"
+              value={formData.dateOfBirth}
+              onChange={handleChange}
+              max={new Date().toISOString().split('T')[0]}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+              disabled={loading || disabled}
+            />
+          </div>
+
+          <div className="md:col-span-1">
             <label htmlFor="age" className="block text-sm font-medium text-gray-700 mb-1">
               <div className="flex items-center gap-2">
                 <Hash className="w-4 h-4" />
