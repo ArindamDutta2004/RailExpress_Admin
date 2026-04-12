@@ -10,6 +10,7 @@ export interface Booking {
   bookingType?: 'tatkal' | 'reservation';
   passengers?: number;
   passengerDetails?: Array<{ name: string; dateOfBirth: string; age: number }>;
+  preferredTrains?: string[];
   paymentStatus?: 'pending' | 'advance pending' | 'advance paid' | 'completed' | 'cancelled';
   statusPhase1: 'waiting' | 'approved' | 'cancelled';
   statusPhase2: 'advance pending' | 'advance paid' | 'booking pending' | 'booking done' | 'not booked';
@@ -22,6 +23,11 @@ export interface Booking {
   ticketUrl?: string;
   billUrl?: string;
   refundQRProof?: string;
+  refundVerificationStatus?: 'pending' | 'verified' | 'processed';
+  refundVerifiedAt?: string | null;
+  refundVerifiedBy?: string | null;
+  refundProofScreenshot?: string | null;
+  refundProcessedAt?: string | null;
   advanceQROwner?: 'suman' | 'debjit' | 'arindam' | null;
   finalQROwner?: 'suman' | 'debjit' | 'arindam' | null;
   createdAt: string;

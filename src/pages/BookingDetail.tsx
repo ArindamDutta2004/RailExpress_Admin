@@ -21,7 +21,9 @@ const BookingDetail = () => {
   const [qrOwner, setQrOwner] = useState<'suman' | 'debjit' | 'arindam'>('suman');
   const [ticketFile, setTicketFile] = useState<File | null>(null);
   const [billFile, setBillFile] = useState<File | null>(null);
+  const [refundProofFile, setRefundProofFile] = useState<File | null>(null);
   const [uploadLoading, setUploadLoading] = useState(false);
+  const [refundActionLoading, setRefundActionLoading] = useState(false);
 
   useEffect(() => {
     fetchBooking();
@@ -242,6 +244,67 @@ const BookingDetail = () => {
     }
   };
 
+  const handleRefundProofUpload = async () => {
+    if (!booking || !refundProofFile) return;
+    setRefundActionLoading(true);
+    try {
+      const attempts: Array<{
+        url: string;
+        payload: FormData;
+      }> = [];
+
+      const form1 = new FormData();
+      form1.append('refundProof', refundProofFile);
+      attempts.push({ url: `/booking/${booking.id}/refund-proof`, payload: form1 });
+
+      const form2 = new FormData();
+      form2.append('refundProof', refundProofFile);
+      form2.append('bookingId', booking.id);
+      attempts.push({ url: '/upload/refund-proof', payload: form2 });
+
+      // Extra compatibility fallbacks for older servers.
+      const form3 = new FormData();
+      form3.append('refundProof', refundProofFile);
+      form3.append('bookingId', booking.id);
+      attempts.push({ url: `/upload/refund-proof/${booking.id}`, payload: form3 });
+
+      const form4 = new FormData();
+      form4.append('refundProof', refundProofFile);
+      form4.append('bookingId', booking.id);
+      attempts.push({ url: '/booking/refund-proof', payload: form4 });
+
+      let lastError: unknown = null;
+      for (const attempt of attempts) {
+        try {
+          await api.post(attempt.url, attempt.payload, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+          });
+          lastError = null;
+          break;
+        } catch (err: unknown) {
+          lastError = err;
+        }
+      }
+      if (lastError) throw lastError;
+
+      setRefundProofFile(null);
+      await fetchBooking();
+      alert('Refund proof uploaded and marked processed');
+    } catch (err: unknown) {
+      const status = (err as { response?: { status?: number } })?.response?.status;
+      const data = (err as { response?: { data?: unknown } })?.response?.data;
+      let msg = 'Failed to upload refund proof';
+      if (data && typeof data === 'object' && 'message' in (data as Record<string, unknown>)) {
+        msg = String((data as { message?: string }).message || msg);
+      } else if (status === 404) {
+        msg = 'Refund-proof upload route not found on backend. Please restart backend and try again.';
+      }
+      alert(msg);
+    } finally {
+      setRefundActionLoading(false);
+    }
+  };
+
   const normalizeUploadUrl = (url?: string) => {
     if (!url) return url;
     if (url.startsWith('http://') || url.startsWith('https://')) return url;
@@ -358,6 +421,16 @@ const BookingDetail = () => {
                     </ul>
                   </div>
                 )}
+                {booking.preferredTrains && booking.preferredTrains.length > 0 && (
+                  <div className="lg:col-span-2 mt-2">
+                    <p className="text-sm text-white/70">Preferred Trains (Optional)</p>
+                    <ul className="mt-1 list-disc list-inside text-white/80 text-sm">
+                      {booking.preferredTrains.map((train, index) => (
+                        <li key={`preferred-train-${index}`}>{train}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -414,6 +487,44 @@ const BookingDetail = () => {
                     </a>
                   ) : (
                     <div className="text-sm text-slate-600">No refund proof uploaded yet.</div>
+                  )}
+                  <div className="mt-3 text-xs text-slate-700">
+                    Status:{' '}
+                    <span className="font-semibold uppercase tracking-wide">
+                      {booking.refundVerificationStatus || 'pending'}
+                    </span>
+                    {booking.refundVerifiedBy && (
+                      <span>
+                        {' '}
+                        • Verified by {booking.refundVerifiedBy}
+                      </span>
+                    )}
+                  </div>
+                  <div className="mt-3 flex flex-col md:flex-row gap-2">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setRefundProofFile(e.target.files?.[0] || null)}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-white"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleRefundProofUpload}
+                      disabled={!refundProofFile || refundActionLoading}
+                      className="px-3 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                    >
+                      {refundActionLoading ? 'Uploading...' : 'Upload Refund Proof'}
+                    </button>
+                  </div>
+                  {booking.refundProofScreenshot && (
+                    <a
+                      href={normalizeUploadUrl(booking.refundProofScreenshot)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-3 inline-block text-sm text-emerald-700 hover:underline"
+                    >
+                      View admin uploaded refund proof
+                    </a>
                   )}
                 </div>
               </div>

@@ -21,9 +21,10 @@ const BookingForm = ({ onBookingSuccess, disabled }: BookingFormProps) => {
     dateOfBirth: '',
     age: '',
     phone: '',
+    preferredTrainsText: '',
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -54,6 +55,15 @@ const BookingForm = ({ onBookingSuccess, disabled }: BookingFormProps) => {
 
     if (!/^\d{10}$/.test(formData.phone)) {
       setError('Phone number must be exactly 10 digits');
+      return false;
+    }
+
+    const preferredTrains = formData.preferredTrainsText
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean);
+    if (preferredTrains.length > 6) {
+      setError('You can add up to 6 preferred trains');
       return false;
     }
 
@@ -90,6 +100,10 @@ const BookingForm = ({ onBookingSuccess, disabled }: BookingFormProps) => {
         bookingType: 'reservation', // Default for admin
         age: parseInt(formData.age),
         phone: formData.phone,
+        preferredTrains: formData.preferredTrainsText
+          .split(/\r?\n/)
+          .map((line) => line.trim())
+          .filter(Boolean),
       });
 
       setSuccess('Booking created successfully!');
@@ -101,6 +115,7 @@ const BookingForm = ({ onBookingSuccess, disabled }: BookingFormProps) => {
         dateOfBirth: '',
         age: '',
         phone: '',
+        preferredTrainsText: '',
       });
 
       setTimeout(() => {
@@ -268,6 +283,22 @@ const BookingForm = ({ onBookingSuccess, disabled }: BookingFormProps) => {
             maxLength={10}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
             placeholder="10 digit phone number"
+            disabled={loading || disabled}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="preferredTrainsText" className="block text-sm font-medium text-gray-700 mb-1">
+            Preferred Trains (Optional)
+          </label>
+          <textarea
+            id="preferredTrainsText"
+            name="preferredTrainsText"
+            value={formData.preferredTrainsText}
+            onChange={handleChange}
+            rows={4}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+            placeholder={`Add one train per line:\n1. 12345 - Train Name\n2. 22334 - Train Name\n(Up to 6 entries)`}
             disabled={loading || disabled}
           />
         </div>
