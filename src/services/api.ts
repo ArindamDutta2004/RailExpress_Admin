@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // This file is only used for admin auth/signup flows.
-const API_BASE_URL = 'https://railexpress-admin.onrender.com/api/admin';
+const API_BASE_URL = 'https://railexpress-backend.onrender.com/api/admin';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
