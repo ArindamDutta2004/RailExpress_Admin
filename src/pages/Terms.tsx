@@ -15,7 +15,7 @@ const termsContent = {
       '6. Privacy: Your personal information will be protected and used only for booking purposes.',
       '7. Liability: We are not responsible for any delays or cancellations by railway authorities.',
       '8. Maximum 3 bookings per day are allowed per user.',
-      '9. Duplicate bookings for the same journey will not be permitted.',
+      '9. Multiple bookings for the same route and journey date are allowed when passengers or ticket needs differ.',
       '10. By accepting these terms, you acknowledge that you have read and understood all conditions.',
     ],
   },
