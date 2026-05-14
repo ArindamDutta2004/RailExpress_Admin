@@ -307,6 +307,7 @@ const BookingDetail = () => {
 
   const normalizeUploadUrl = (url?: string) => {
     if (!url) return url;
+    if (url.startsWith('generated:')) return url;
     if (url.startsWith('http://') || url.startsWith('https://')) return url;
 
     // Backend saves as `/uploads/<file>.pdf` but some records may come as `uploads/<file>.pdf`.
@@ -320,6 +321,42 @@ const BookingDetail = () => {
     if (idxRel !== -1) return `${BACKEND_BASE}/${url.slice(idxRel)}`;
 
     return url;
+  };
+
+  const handleDocumentDownload = async (type: 'ticket' | 'bill') => {
+    if (!booking) return;
+    setUploadLoading(true);
+    try {
+      console.log(`Admin downloading ${type} PDF for booking`, booking.id);
+      const response = await api.get(`/booking/${booking.id}/download/${type}`, {
+        responseType: 'blob',
+      });
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `${type}-${booking.id}.pdf`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err: unknown) {
+      console.error(`Admin failed to download ${type} PDF`, err);
+      const responseData = (err as { response?: { data?: unknown } })?.response?.data;
+      let msg = `Failed to download ${type} PDF`;
+      if (typeof Blob !== 'undefined' && responseData instanceof Blob) {
+        try {
+          const text = await responseData.text();
+          const parsed = JSON.parse(text);
+          if (parsed?.message) msg = String(parsed.message);
+        } catch (_parseError) {
+          // Keep fallback message.
+        }
+      }
+      alert(msg);
+    } finally {
+      setUploadLoading(false);
+    }
   };
 
   const formatOwner = (owner?: 'suman' | 'debjit' | 'arindam' | null) => {
@@ -556,14 +593,14 @@ const BookingDetail = () => {
                       </button>
                     </div>
                     {booking.ticketUrl && (
-                      <a
-                        href={normalizeUploadUrl(booking.ticketUrl)}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
+                        type="button"
+                        onClick={() => handleDocumentDownload('ticket')}
+                        disabled={uploadLoading}
                         className="text-sm text-sky-200 hover:underline mt-2 inline-block"
                       >
-                        View uploaded ticket
-                      </a>
+                        Download generated ticket
+                      </button>
                     )}
                   </div>
 
@@ -588,14 +625,14 @@ const BookingDetail = () => {
                       </button>
                     </div>
                     {booking.billUrl && (
-                      <a
-                        href={normalizeUploadUrl(booking.billUrl)}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
+                        type="button"
+                        onClick={() => handleDocumentDownload('bill')}
+                        disabled={uploadLoading}
                         className="text-sm text-sky-200 hover:underline mt-2 inline-block"
                       >
-                        View uploaded bill
-                      </a>
+                        Download generated bill
+                      </button>
                     )}
                   </div>
                 </div>

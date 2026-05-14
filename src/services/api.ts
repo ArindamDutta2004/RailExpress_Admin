@@ -1,7 +1,8 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://railexpress-backend.onrender.com/api/admin';
-export const BACKEND_BASE = 'https://railexpress-backend.onrender.com';
+export const BACKEND_BASE =
+  import.meta.env.VITE_BACKEND_BASE_URL || 'https://railexpress-backend.onrender.com';
+const API_BASE_URL = import.meta.env.VITE_ADMIN_API_BASE_URL || `${BACKEND_BASE}/api/admin`;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -11,7 +12,7 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('adminToken');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

@@ -1,7 +1,9 @@
 import axios from 'axios';
 
-export const ADMIN_API_BASE = 'http://localhost:5000/api/admin';
-export const BACKEND_BASE = 'http://localhost:5000';
+export const BACKEND_BASE =
+  import.meta.env.VITE_BACKEND_BASE_URL || 'https://railexpress-backend.onrender.com';
+export const ADMIN_API_BASE =
+  import.meta.env.VITE_ADMIN_API_BASE_URL || `${BACKEND_BASE}/api/admin`;
 
 const api = axios.create({
   baseURL: ADMIN_API_BASE,
