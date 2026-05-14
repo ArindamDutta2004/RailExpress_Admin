@@ -15,11 +15,11 @@ const Navigation = () => {
   return (
     <nav className="bg-white/80 backdrop-blur border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex gap-4 items-center justify-between">
-          <div className="flex gap-4">
+        <div className="flex items-center justify-between overflow-x-auto">
+          <div className="flex min-w-max gap-1 sm:gap-4">
           <button
             onClick={() => navigate('/dashboard')}
-            className={`flex items-center gap-2 px-4 py-4 border-b-2 transition ${
+            className={`flex items-center gap-2 px-3 sm:px-4 py-4 border-b-2 transition ${
               isActive('/dashboard')
                 ? 'border-blue-600 text-blue-600'
                 : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
@@ -31,7 +31,7 @@ const Navigation = () => {
 
           <button
             onClick={() => navigate('/feedback')}
-            className={`flex items-center gap-2 px-4 py-4 border-b-2 transition ${
+            className={`flex items-center gap-2 px-3 sm:px-4 py-4 border-b-2 transition ${
               isActive('/feedback')
                 ? 'border-blue-600 text-blue-600'
                 : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
@@ -42,7 +42,7 @@ const Navigation = () => {
           </button>
           <button
             onClick={() => navigate('/profile')}
-            className={`flex items-center gap-2 px-4 py-4 border-b-2 transition ${
+            className={`flex items-center gap-2 px-3 sm:px-4 py-4 border-b-2 transition ${
               isActive('/profile')
                 ? 'border-blue-600 text-blue-600'
                 : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'

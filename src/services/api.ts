@@ -59,18 +59,16 @@ export const bookingAPI = {
 
   uploadTicket: (id: string, file: File) => {
     const formData = new FormData();
+    formData.append('bookingId', id);
     formData.append('ticket', file);
-    return api.post(`/booking/${id}/ticket`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    return api.post('/upload/ticket', formData);
   },
 
   uploadBill: (id: string, file: File) => {
     const formData = new FormData();
+    formData.append('bookingId', id);
     formData.append('bill', file);
-    return api.post(`/booking/${id}/bill`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    return api.post('/upload/bill', formData);
   },
 };
 

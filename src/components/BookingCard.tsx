@@ -100,11 +100,11 @@ const BookingCard = ({ booking, onUpdate }: BookingCardProps) => {
         className="p-4 bg-white cursor-pointer"
         onClick={() => setExpanded(!expanded)}
       >
-        <div className="flex justify-between items-start mb-3">
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-3">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 mb-2 min-w-0">
               <MapPin className="w-4 h-4 text-blue-600" />
-              <span className="font-semibold text-gray-800">
+              <span className="font-semibold text-gray-800 break-words">
                 {booking.fromStation} → {booking.toStation}
               </span>
             </div>
@@ -113,13 +113,13 @@ const BookingCard = ({ booking, onUpdate }: BookingCardProps) => {
               <span>{formatDate(booking.journeyDate)}</span>
             </div>
           </div>
-          <div className={`px-3 py-1 rounded-full text-xs font-semibold border flex items-center gap-1 ${getStatusColor(booking.paymentStatus)}`}>
+          <div className={`self-start px-3 py-1 rounded-full text-xs font-semibold border flex items-center gap-1 ${getStatusColor(booking.paymentStatus)}`}>
             {getStatusIcon(booking.paymentStatus)}
             {booking.paymentStatus}
           </div>
         </div>
 
-        <div className="flex items-center gap-4 text-sm text-gray-600">
+        <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-4 text-sm text-gray-600">
           <div className="flex items-center gap-1">
             <User className="w-4 h-4" />
             <span>{booking.passengerName}</span>
@@ -149,7 +149,7 @@ const BookingCard = ({ booking, onUpdate }: BookingCardProps) => {
 
       {expanded && (
         <div className="border-t border-gray-200 bg-gray-50 p-4 space-y-4">
-          <div className="grid grid-cols-2 gap-4 text-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
             <div>
               <span className="text-gray-600">Age:</span>
               <span className="ml-2 font-medium">{booking.age}</span>
@@ -185,7 +185,7 @@ const BookingCard = ({ booking, onUpdate }: BookingCardProps) => {
           {showTicketDownload && (
             <div className="bg-white rounded-lg p-4 border border-gray-200">
               <h4 className="font-semibold text-gray-800 mb-3">Download Documents</h4>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {booking.ticketPDF && (
                   <a
                     href={booking.ticketPDF}

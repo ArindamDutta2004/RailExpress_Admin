@@ -175,25 +175,23 @@ const BookingDetail = () => {
   const handleTicketUpload = async () => {
     if (!booking || booking.statusPhase2 !== 'booking done' || !ticketFile) return;
 
-    if (ticketFile.type !== 'application/pdf') {
+    if (ticketFile.type !== 'application/pdf' && !ticketFile.name.toLowerCase().endsWith('.pdf')) {
       alert('Only PDF files are allowed');
       return;
     }
 
-    if (ticketFile.size > 2 * 1024 * 1024) {
-      alert('File size must be less than 2MB');
+    if (ticketFile.size > 10 * 1024 * 1024) {
+      alert('File size must be less than 10MB');
       return;
     }
 
     setUploadLoading(true);
     try {
       const formData = new FormData();
-      formData.append('ticket', ticketFile);
       formData.append('bookingId', booking.id);
+      formData.append('ticket', ticketFile);
 
-      await api.post('/upload/ticket', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      await api.post('/upload/ticket', formData);
 
       await fetchBooking();
       setTicketFile(null);
@@ -211,25 +209,23 @@ const BookingDetail = () => {
   const handleBillUpload = async () => {
     if (!booking || booking.statusPhase2 !== 'booking done' || !billFile) return;
 
-    if (billFile.type !== 'application/pdf') {
+    if (billFile.type !== 'application/pdf' && !billFile.name.toLowerCase().endsWith('.pdf')) {
       alert('Only PDF files are allowed');
       return;
     }
 
-    if (billFile.size > 2 * 1024 * 1024) {
-      alert('File size must be less than 2MB');
+    if (billFile.size > 10 * 1024 * 1024) {
+      alert('File size must be less than 10MB');
       return;
     }
 
     setUploadLoading(true);
     try {
       const formData = new FormData();
-      formData.append('bill', billFile);
       formData.append('bookingId', booking.id);
+      formData.append('bill', billFile);
 
-      await api.post('/upload/bill', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      await api.post('/upload/bill', formData);
 
       await fetchBooking();
       setBillFile(null);
@@ -276,9 +272,7 @@ const BookingDetail = () => {
       let lastError: unknown = null;
       for (const attempt of attempts) {
         try {
-          await api.post(attempt.url, attempt.payload, {
-            headers: { 'Content-Type': 'multipart/form-data' },
-          });
+          await api.post(attempt.url, attempt.payload);
           lastError = null;
           break;
         } catch (err: unknown) {
@@ -404,12 +398,12 @@ const BookingDetail = () => {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
             <div className="glass-card hover-glow rounded-lg p-6 text-white">
               <h2 className="text-lg font-semibold mb-4">Customer Information</h2>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-white/70">Name</p>
                   <p className="font-medium text-white/90">{booking.customerName}</p>
@@ -418,16 +412,16 @@ const BookingDetail = () => {
                   <p className="text-sm text-white/70">Phone</p>
                   <p className="font-medium text-white/90">{booking.phone}</p>
                 </div>
-                <div className="col-span-2">
+                <div className="sm:col-span-2 min-w-0">
                   <p className="text-sm text-white/70">Email</p>
-                  <p className="font-medium text-white/90">{booking.email}</p>
+                  <p className="font-medium text-white/90 break-words">{booking.email}</p>
                 </div>
               </div>
             </div>
 
             <div className="glass-card hover-glow rounded-lg p-6 text-white">
               <h2 className="text-lg font-semibold mb-4">Journey Details</h2>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-white/70">From</p>
                   <p className="font-medium text-white/90">{booking.from}</p>
@@ -473,7 +467,7 @@ const BookingDetail = () => {
 
             <div className="glass-card hover-glow rounded-lg p-6 text-white">
               <h2 className="text-lg font-semibold mb-4">Payment Information</h2>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {booking.totalAmount && (
                   <div>
                     <p className="text-sm text-white/70">Total Amount</p>
@@ -542,7 +536,7 @@ const BookingDetail = () => {
                       type="file"
                       accept="image/*"
                       onChange={(e) => setRefundProofFile(e.target.files?.[0] || null)}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-white"
+                    className="min-w-0 flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-white"
                     />
                     <button
                       type="button"
@@ -576,17 +570,17 @@ const BookingDetail = () => {
                     <label className="block text-sm font-medium text-white/80 mb-2">
                       Ticket PDF {booking.ticketUrl && '(Uploaded)'}
                     </label>
-                    <div className="flex gap-2">
+                    <div className="flex flex-col sm:flex-row gap-2">
                       <input
                         type="file"
-                        accept=".pdf"
+                        accept="application/pdf,.pdf"
                         onChange={(e) => setTicketFile(e.target.files?.[0] || null)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                        className="min-w-0 flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                       />
                       <button
                         onClick={handleTicketUpload}
                         disabled={!ticketFile || uploadLoading}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center gap-2 press"
+                        className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2 press"
                       >
                         <Upload className="w-4 h-4" />
                         Upload
@@ -599,7 +593,7 @@ const BookingDetail = () => {
                         disabled={uploadLoading}
                         className="text-sm text-sky-200 hover:underline mt-2 inline-block"
                       >
-                        Download generated ticket
+                        Download ticket
                       </button>
                     )}
                   </div>
@@ -608,17 +602,17 @@ const BookingDetail = () => {
                     <label className="block text-sm font-medium text-white/80 mb-2">
                       Bill PDF {booking.billUrl && '(Uploaded)'}
                     </label>
-                    <div className="flex gap-2">
+                    <div className="flex flex-col sm:flex-row gap-2">
                       <input
                         type="file"
-                        accept=".pdf"
+                        accept="application/pdf,.pdf"
                         onChange={(e) => setBillFile(e.target.files?.[0] || null)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                        className="min-w-0 flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                       />
                       <button
                         onClick={handleBillUpload}
                         disabled={!billFile || uploadLoading}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center gap-2 press"
+                        className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2 press"
                       >
                         <Upload className="w-4 h-4" />
                         Upload
@@ -631,7 +625,7 @@ const BookingDetail = () => {
                         disabled={uploadLoading}
                         className="text-sm text-sky-200 hover:underline mt-2 inline-block"
                       >
-                        Download generated bill
+                        Download bill
                       </button>
                     )}
                   </div>
@@ -787,11 +781,11 @@ const BookingDetail = () => {
                 <div className="space-y-2">
                   <div className="bg-white/85 rounded-xl p-3 text-slate-900">
                     <label className="block text-sm font-medium mb-1">Change QR Owner</label>
-                    <div className="flex gap-2">
+                    <div className="flex flex-col sm:flex-row gap-2">
                       <select
                         value={qrOwner}
                         onChange={(e) => setQrOwner(e.target.value as 'suman' | 'debjit' | 'arindam')}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-white text-slate-900 outline-none"
+                        className="min-w-0 flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-white text-slate-900 outline-none"
                       >
                         <option value="suman">Suman</option>
                         <option value="arindam">Arindam</option>
@@ -800,7 +794,7 @@ const BookingDetail = () => {
                       <button
                         onClick={handleUpdateQROwner}
                         disabled={actionLoading}
-                        className="px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-300"
+                        className="w-full sm:w-auto px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-300"
                       >
                         Update
                       </button>
@@ -829,11 +823,11 @@ const BookingDetail = () => {
                 <div className="space-y-2">
                   <div className="bg-white/85 rounded-xl p-3 text-slate-900">
                     <label className="block text-sm font-medium mb-1">Change QR Owner</label>
-                    <div className="flex gap-2">
+                    <div className="flex flex-col sm:flex-row gap-2">
                       <select
                         value={qrOwner}
                         onChange={(e) => setQrOwner(e.target.value as 'suman' | 'debjit' | 'arindam')}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-white text-slate-900 outline-none"
+                        className="min-w-0 flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-white text-slate-900 outline-none"
                       >
                         <option value="suman">Suman</option>
                         <option value="arindam">Arindam</option>
@@ -842,7 +836,7 @@ const BookingDetail = () => {
                       <button
                         onClick={handleUpdateQROwner}
                         disabled={actionLoading}
-                        className="px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-300"
+                        className="w-full sm:w-auto px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-300"
                       >
                         Update
                       </button>

@@ -95,14 +95,14 @@ const Dashboard = () => {
     <div className="min-h-screen admin-animated-bg page">
       <header className="bg-white/80 backdrop-blur shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <div>
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+            <div className="min-w-0">
               <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-              <p className="text-sm text-gray-600 mt-1">Welcome, {user?.name}</p>
+              <p className="text-sm text-gray-600 mt-1 truncate">Welcome, {user?.name}</p>
             </div>
             <button
               onClick={logout}
-              className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition press"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition press"
             >
               <LogOut className="w-4 h-4" />
               Logout
@@ -113,8 +113,8 @@ const Dashboard = () => {
 
       <Navigation />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="glass-card hover-glow rounded-lg p-6 mb-6">
+      <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-8">
+        <div className="glass-card hover-glow rounded-lg p-4 sm:p-6 mb-6">
           <div className="flex items-center gap-2 mb-4">
             <Filter className="w-5 h-5 text-gray-600" />
             <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
@@ -208,7 +208,7 @@ const Dashboard = () => {
               </h2>
             </div>
 
-            <div className="overflow-x-auto max-h-[65vh]">
+            <div className="overflow-x-auto max-h-[65vh] overscroll-x-contain">
               <table className="min-w-full divide-y divide-slate-200 table-glass">
                 <thead>
                   <tr>
