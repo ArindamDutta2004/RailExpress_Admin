@@ -7,7 +7,7 @@ export interface Booking {
   to: string;
   date: string;
   passengers: number;
-  bookingType?: 'tatkal' | 'reservation';
+  bookingType?: '' | 'reservation';
   passengers?: number;
   passengerDetails?: Array<{ name: string; dateOfBirth: string; age: number }>;
   preferredTrains?: string[];

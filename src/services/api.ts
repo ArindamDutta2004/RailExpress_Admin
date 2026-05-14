@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// This file is only used for admin auth/signup flows.
 const API_BASE_URL = 'https://railexpress-backend.onrender.com/api/admin';
+export const BACKEND_BASE = 'https://railexpress-backend.onrender.com';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -30,7 +30,7 @@ export const bookingAPI = {
     journeyDate: string;
     passengerName: string;
     dateOfBirth: string;
-    bookingType: 'tatkal' | 'reservation';
+    bookingType: 'tatkal' | 'reservation' | 'vip';
     age: number;
     phone: string;
     preferredTrains?: string[];
